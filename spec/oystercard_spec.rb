@@ -40,7 +40,7 @@ RSpec.describe Oystercard do
 
     it "Should record the entry station upon touch-in" do
       subject.top_up(1)
-      expect{subject.touch_in(:station)}. to change{subject.entry_station}.to :station
+      expect{subject.touch_in(:station)}. to change{subject.entry_station}.to(:station)
     end
   end
 
@@ -48,14 +48,25 @@ RSpec.describe Oystercard do
     it "Should return that the oystercard has been touched-out" do
       subject.top_up(1)
       subject.touch_in(:station)
-      expect(subject.touch_out).to eq "out"
+      expect(subject.touch_out(:station)).to eq "out"
     end
 
     it "Should reduce the balance by the minimum fare of £1" do
       subject.top_up(1)
       subject.touch_in(:station)
-      expect{subject.touch_out}.to change{subject.balance}.by(-1)
+      expect{subject.touch_out(:station)}.to change{subject.balance}.by(-1)
+    end
 
+    it "Should record the exit station upon touch-out" do
+      subject.top_up(1)
+      subject.touch_in(:station)
+      expect{subject.touch_out(:station)}. to change{subject.exit_station}.to(:station)
+    end
+
+    it "Should record the exit/entry history of a journey upon touch-out"do
+      subject.top_up(1)
+      subject.touch_in(:station)
+      expect{subject.touch_out(:station)}.to change{subject.journey_history}.to([{entry_station: :station, exit_station: :station}])
     end
   end
 
