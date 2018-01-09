@@ -19,6 +19,7 @@ TOP_UP_LIMIT = 90
   end
 
   def touch_in
+    raise "You have insufficient funds to touch-in" if @balance < 1
     @in_journey = true
     in_journey?
   end

@@ -28,18 +28,27 @@ RSpec.describe Oystercard do
 
   context '# .touch_in' do
     it "Should return that the oystercard has been touched-in" do
+      subject.top_up(1)
       expect(subject.touch_in).to eq "in"
+    end
+
+    it "Should raise an error if touched-in without minimum balance" do
+      subject.balance == 0
+      expect{subject.touch_in}.to raise_error "You have insufficient funds to touch-in"
     end
   end
 
   context '# .touch_out' do
     it "Should return that the oystercard has been touched-out" do
+      subject.top_up(1)
+      subject.touch_in
       expect(subject.touch_out).to eq "out"
     end
   end
 
   context '# .in_journey?' do
     it "Should return whether the oystercard has been touched in or touched out on a journey" do
+      subject.top_up(1)
       subject.touch_in
       expect(subject.in_journey?).to eq "in"
     end
