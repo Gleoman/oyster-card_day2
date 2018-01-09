@@ -22,7 +22,7 @@ RSpec.describe Oystercard do
   context '# .deduct' do
     it "Should deduct the fare from the balance" do
       subject.top_up(20)
-      expect(subject.deduct(10)).to eq 10
+      expect(subject.send(:deduct, 1)).to eq 19
     end
   end
 
@@ -43,6 +43,13 @@ RSpec.describe Oystercard do
       subject.top_up(1)
       subject.touch_in
       expect(subject.touch_out).to eq "out"
+    end
+
+    it "Should reduce the balance by the minimum fare of £1" do
+      subject.top_up(1)
+      subject.touch_in
+      expect{subject.touch_out}.to change{subject.balance}.by(-1)
+
     end
   end
 
