@@ -1,9 +1,8 @@
 require './lib/oystercard.rb'
 
 RSpec.describe Oystercard do
-
   context '# .balance' do
-    it "Should return balance as zero" do
+    it 'Should return balance as zero' do
       expect(subject.balance).to eq 0
     end
   end
@@ -24,6 +23,25 @@ RSpec.describe Oystercard do
     it "Should deduct the fare from the balance" do
       subject.top_up(20)
       expect(subject.deduct(10)).to eq 10
+    end
+  end
+
+  context '# .touch_in' do
+    it "Should return that the oystercard has been touched-in" do
+      expect(subject.touch_in).to eq "in"
+    end
+  end
+
+  context '# .touch_out' do
+    it "Should return that the oystercard has been touched-out" do
+      expect(subject.touch_out).to eq "out"
+    end
+  end
+
+  context '# .in_journey?' do
+    it "Should return whether the oystercard has been touched in or touched out on a journey" do
+      subject.touch_in
+      expect(subject.in_journey?).to eq "in"
     end
   end
 
