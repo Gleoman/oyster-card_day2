@@ -1,6 +1,7 @@
 require './lib/oystercard.rb'
 
 RSpec.describe Oystercard do
+  let(:station) { double :station }
   context '# .balance' do
     it 'Should return balance as zero' do
       expect(subject.balance).to eq 0
@@ -29,25 +30,30 @@ RSpec.describe Oystercard do
   context '# .touch_in' do
     it "Should return that the oystercard has been touched-in" do
       subject.top_up(1)
-      expect(subject.touch_in).to eq "in"
+      expect(subject.touch_in(:station)).to eq "in"
     end
 
     it "Should raise an error if touched-in without minimum balance" do
       subject.balance == 0
-      expect{subject.touch_in}.to raise_error "You have insufficient funds to touch-in"
+      expect{subject.touch_in(:station)}.to raise_error "You have insufficient funds to touch-in"
+    end
+
+    it "Should record the entry station upon touch-in" do
+      subject.top_up(1)
+      expect{subject.touch_in(:station)}. to change{subject.entry_station}.to :station
     end
   end
 
   context '# .touch_out' do
     it "Should return that the oystercard has been touched-out" do
       subject.top_up(1)
-      subject.touch_in
+      subject.touch_in(:station)
       expect(subject.touch_out).to eq "out"
     end
 
     it "Should reduce the balance by the minimum fare of £1" do
       subject.top_up(1)
-      subject.touch_in
+      subject.touch_in(:station)
       expect{subject.touch_out}.to change{subject.balance}.by(-1)
 
     end
@@ -56,7 +62,7 @@ RSpec.describe Oystercard do
   context '# .in_journey?' do
     it "Should return whether the oystercard has been touched in or touched out on a journey" do
       subject.top_up(1)
-      subject.touch_in
+      subject.touch_in(:station)
       expect(subject.in_journey?).to eq "in"
     end
   end
